@@ -60,9 +60,16 @@ find_package (Threads)
 
 include(CheckIncludeFiles)
 include(CheckSymbolExists)
-CHECK_SYMBOL_EXISTS(PTHREAD_MUTEX_RECURSIVE pthread.h HAVE_PTHREAD_MUTEX_RECURSIVE_DEFN)
-if (HAVE_PTHREAD_MUTEX_RECURSIVE_DEFN)
-    add_definitions(-DHAVE_PTHREAD_MUTEX_RECURSIVE=1)
+include(CheckCSourceCompiles)
+
+CHECK_C_SOURCE_COMPILES("
+#include <pthread.h>
+int main() {
+  (void) PTHREAD_MUTEX_RECURSIVE;
+}
+" HAVE_PTHREAD_MUTEX_RECURSIVE)
+if(HAVE_PTHREAD_MUTEX_RECURSIVE)
+  add_definitions(-DHAVE_PTHREAD_MUTEX_RECURSIVE=1)
 endif()
 
 boost_report_value(PROJ_PLATFORM_NAME)
